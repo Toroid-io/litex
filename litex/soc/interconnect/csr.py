@@ -282,7 +282,7 @@ class CSRStatus(_CompoundCSR):
 
     Attributes
     ----------
-    status : Signal(size), in
+    status : Signal(size), out
         The value of the CSRStatus register.
     """
 
@@ -365,7 +365,7 @@ class CSRStorage(_CompoundCSR):
         The strobe signal indicating a write to the ``CSRStorage`` register from the CPU. It is active
         for one cycle, after or during a write from the bus.
 
-    we : Signal(), out
+    we : Signal(), in
         The strobe signal to write to the ``CSRStorage`` register from the logic. Only available when
         ``write_from_dev == True``
 

@@ -12,6 +12,7 @@ OBJECTS = isr.o			\
 	  helpers.o			\
 	  cmd_bios.o		\
 	  cmd_mem.o			\
+	  cmd_spw.o			\
 	  cmd_boot.o		\
 	  cmd_i2c.o			\
 	  cmd_spiflash.o	\
