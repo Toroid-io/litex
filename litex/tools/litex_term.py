@@ -137,16 +137,17 @@ class CrossoverUART:
 from litex.build.openocd import OpenOCD
 
 class JTAGUART:
-    def __init__(self, config="openocd_xc7_ft2232.cfg", port=20000, chain=1):
+    def __init__(self, config="openocd_xc7_ft2232.cfg", port=20000, chain=1, wait=0.5):
         self.config = config
         self.port   = port
         self.chain  = chain
+        self.wait = wait
 
     def open(self):
         self.file, self.name = pty.openpty()
         self.jtag2tcp_thread = multiprocessing.Process(target=self.jtag2tcp)
         self.jtag2tcp_thread.start()
-        time.sleep(0.5)
+        time.sleep(self.wait)
         self.pty2tcp_thread  = multiprocessing.Process(target=self.pty2tcp)
         self.tcp2pty_thread  = multiprocessing.Process(target=self.tcp2pty)
         self.tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -619,6 +620,7 @@ def _get_args():
     parser.add_argument("--jtag-name",    default="jtag_uart",                help="JTAG UART type (jtag_uart).")
     parser.add_argument("--jtag-config",  default="openocd_xc7_ft2232.cfg",   help="OpenOCD JTAG configuration file for jtag_uart.")
     parser.add_argument("--jtag-chain",   default=1,                          help="JTAG chain.")
+    parser.add_argument("--jtag-wait",    default=0.5,                        help="Wait before trying to connect to OpenOCD.")
     return parser.parse_args()
 
 def main():
@@ -635,7 +637,7 @@ def main():
         port = os.ttyname(xover.name)
     elif args.port in ["jtag"]:
         if args.jtag_name == "jtag_uart":
-            jtag_uart = JTAGUART(config=args.jtag_config, chain=int(args.jtag_chain))
+            jtag_uart = JTAGUART(config=args.jtag_config, chain=int(args.jtag_chain), wait=float(args.jtag_wait))
             jtag_uart.open()
             port = os.ttyname(jtag_uart.name)
         else:
